@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "ebook-1",
+      "description": "Premium Ebook Cover",
+      "imageUrl": "https://picsum.photos/seed/101/600/800",
+      "imageHint": "ebook cover"
+    },
+    {
+      "id": "course-1",
+      "description": "Digital Marketing Course",
+      "imageUrl": "https://picsum.photos/seed/102/1200/800",
+      "imageHint": "marketing course"
+    },
+    {
+      "id": "template-1",
+      "description": "SaaS Dashboard Template",
+      "imageUrl": "https://picsum.photos/seed/103/1200/800",
+      "imageHint": "saas dashboard"
+    },
+    {
+      "id": "software-1",
+      "description": "Automation Tool Interface",
+      "imageUrl": "https://picsum.photos/seed/104/1200/800",
+      "imageHint": "software interface"
+    },
+    {
+      "id": "graphics-1",
+      "description": "3D Icon Pack",
+      "imageUrl": "https://picsum.photos/seed/105/1200/800",
+      "imageHint": "3d icons"
+    },
+    {
+      "id": "course-2",
+      "description": "Mastering UI Design",
+      "imageUrl": "https://picsum.photos/seed/106/1200/800",
+      "imageHint": "ui design"
+    }
+  ]
 }
