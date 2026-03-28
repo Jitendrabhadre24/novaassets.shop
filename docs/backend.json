@@ -1,0 +1,109 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a registered user of the NovaAssets platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the user, used for login.",
+          "format": "email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "The timestamp when the user account was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "createdAt"
+      ]
+    },
+    "ProductRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ProductRequest",
+      "type": "object",
+      "description": "Records a user's request for a specific digital product, serving as a lead for future monetization.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ProductRequest entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User who made the request. (Relationship: User 1:N ProductRequest)"
+        },
+        "productName": {
+          "type": "string",
+          "description": "The name of the digital product that was requested."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The timestamp when the product request was made.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "productName",
+        "timestamp"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores individual user profiles. The document ID (`{userId}`) matches Firebase Authentication's UID (`request.auth.uid`). Allows for secure, path-based ownership.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user, matching Firebase Auth UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/productRequests/{productRequestId}",
+        "definition": {
+          "entityName": "ProductRequest",
+          "schema": {
+            "$ref": "#/backend/entities/ProductRequest"
+          },
+          "description": "Stores product requests made by a specific user. This subcollection is deeply nested under the user's profile to enforce strong ownership. Includes denormalized 'userId' (matching parent path and `request.auth.uid`) and 'email' for authorization independence and simplified dashboard display, ensuring rules do not require `get()` operations. This structure directly supports secure QAPs for listing requests.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who made the request, matching Firebase Auth UID."
+            },
+            {
+              "name": "productRequestId",
+              "description": "The unique ID of the specific product request."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to be secure, scalable, and highly debuggable, strictly adhering to the core design principles and strategy mandates. It leverages hierarchical paths and denormalization to achieve Authorization Independence and robust Query as You Pay (QAP) security rules.\n\n**1. User Profiles (`/users/{userId}`):**\nEach user's profile is stored as a document in the top-level `users` collection. The document ID (`{userId}`) for each user document is their Firebase Authentication UID. This immediately establishes path-based ownership, making security rules extremely simple: a user's `request.auth.uid` must match the `{userId}` in the path to access their own profile. This structure inherently ensures Authorization Independence as the authorization context is directly available in the path, eliminating the need for `get()` calls to verify ownership.\n\n**2. Product Requests (`/users/{userId}/productRequests/{productRequestId}`):**\nProduct requests are stored in a subcollection named `productRequests` nested directly under the respective user's profile (`/users/{userId}/`). This hierarchical structure for user-owned data is crucial for security and scalability. Each `productRequest` document's ID (`{productRequestId}`) is a unique identifier for that request.\n\n**Authorization Independence for Product Requests:**\nTo achieve Authorization Independence (CRITICAL), the `productRequest` document denormalizes key authorization context:\n*   **`userId`:** The `userId` from the parent path (`{userId}`) is duplicated as a field within each `productRequest` document. This allows security rules to verify ownership by comparing `request.auth.uid` against the `userId` in the path AND the `userId` field within the document, without needing to `get()` the parent `user` document.\n*   **`email`:** As per user requirements, the user's `email` is also denormalized into each `productRequest` document. This eliminates the need for rules to perform a `get()` operation on the `user` document or rely solely on `request.auth.token.email` for validation or display, simplifying rules and improving performance during creation and retrieval.\n\nThis denormalization ensures that a `productRequest` document carries all necessary information for its own authorization and display, making operations on individual requests atomic and preventing complex, dependent rule evaluations.\n\n**Query as You Pay (QAPs) for Product Requests:**\nThe nested structure (`/users/{userId}/productRequests/{productRequestId}`) directly supports QAPs. When a user queries for their product requests, they will issue a query like `db.collection('users').doc(request.auth.uid).collection('productRequests').get()`. The security rules will simply enforce that `request.auth.uid` must match the `{userId}` in the path for any `list` or `read` operation within that subcollection. This means that an unauthorized `list` attempt to `/users/{someOtherUserId}/productRequests` will be entirely denied at the path level by the rules, preventing the query from running and ensuring that no unauthorized data is ever returned. The rules are not acting as filters on a broader dataset; they are enforcing access permissions at the specific collection path."
+  }
+}
