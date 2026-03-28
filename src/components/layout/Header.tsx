@@ -1,21 +1,30 @@
+
 "use client"
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ShoppingBag, Menu, X, Sparkles } from 'lucide-react';
+import { ShoppingBag, Menu, X, Sparkles, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
 
 export default function Header() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
 
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Products', href: '/products' },
     { name: 'Categories', href: '/#categories' },
   ];
+
+  const handleLogout = () => {
+    signOut(auth);
+  };
 
   return (
     <header className="sticky top-0 z-50 glass-morphism w-full">
@@ -43,9 +52,34 @@ export default function Header() {
               {link.name}
             </Link>
           ))}
-          <Button variant="default" className="bg-primary hover:bg-primary/90 rounded-full px-8 h-12 font-black uppercase tracking-wider text-xs shadow-[0_5px_15px_rgba(168,85,247,0.4)]">
-            <Sparkles className="w-4 h-4 mr-2" /> Join Free
-          </Button>
+          
+          {!isUserLoading && (
+            user ? (
+              <div className="flex items-center gap-4 border-l border-white/10 pl-10">
+                <Link 
+                  href="/dashboard"
+                  className={cn(
+                    "flex items-center gap-2 text-xs font-black uppercase tracking-widest",
+                    pathname === '/dashboard' ? "text-primary" : "text-muted-foreground hover:text-white"
+                  )}
+                >
+                  <User className="w-4 h-4" /> Dashboard
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className="text-muted-foreground hover:text-destructive transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <Button asChild variant="default" className="bg-primary hover:bg-primary/90 rounded-full px-8 h-12 font-black uppercase tracking-wider text-xs shadow-[0_5px_15px_rgba(168,85,247,0.4)]">
+                <Link href="/signup">
+                  <Sparkles className="w-4 h-4 mr-2" /> Join Free
+                </Link>
+              </Button>
+            )
+          )}
         </nav>
 
         {/* Mobile Toggle */}
@@ -71,9 +105,16 @@ export default function Header() {
                 {link.name}
               </Link>
             ))}
-            <Button variant="default" className="bg-primary hover:bg-primary/90 w-full rounded-full h-16 text-lg font-black uppercase tracking-tighter">
-              Get Started
-            </Button>
+            {!user ? (
+               <Button asChild variant="default" className="bg-primary hover:bg-primary/90 w-full rounded-full h-16 text-lg font-black uppercase tracking-tighter">
+                <Link href="/signup">Get Started</Link>
+              </Button>
+            ) : (
+              <>
+                <Link href="/dashboard" className="text-xl font-black uppercase tracking-tighter p-3">Dashboard</Link>
+                <button onClick={handleLogout} className="text-xl font-black uppercase tracking-tighter p-3 text-left text-destructive">Logout</button>
+              </>
+            )}
           </nav>
         </div>
       )}

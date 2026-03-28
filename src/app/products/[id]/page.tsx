@@ -2,14 +2,16 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Image from 'next/image';
+import { useParams, useRouter } from 'next/navigation';
 import { PRODUCTS, Product } from '@/app/lib/products';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useUser, useFirestore } from '@/firebase';
+import { doc, collection, setDoc, serverTimestamp } from 'firebase/firestore';
+import ProductCover from '@/components/products/ProductCover';
 import { 
   Star, 
   Download, 
@@ -30,7 +32,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog"
 
 const VERIFICATION_STEPS = [
@@ -43,6 +44,9 @@ const VERIFICATION_STEPS = [
 export default function ProductDetailPage() {
   const { id } = useParams();
   const { toast } = useToast();
+  const router = useRouter();
+  const { user, isUserLoading } = useUser();
+  const db = useFirestore();
   const [product, setProduct] = useState<Product | null>(null);
   
   // Unlock Flow States
@@ -54,7 +58,7 @@ export default function ProductDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Security: Disable Right Click & Inspect
+  // Security
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => e.preventDefault();
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -76,7 +80,6 @@ export default function ProductDetailPage() {
     };
   }, []);
 
-  // Handle Return from Smartlink
   useEffect(() => {
     const unlockStarted = localStorage.getItem('unlock_started');
     const unlockTime = localStorage.getItem('unlock_time');
@@ -107,7 +110,6 @@ export default function ProductDetailPage() {
 
   const startFakeVerification = () => {
     setIsVerifying(true);
-    let stepCount = 0;
     
     const stepInterval = setInterval(() => {
       setVerificationStep(prev => {
@@ -135,21 +137,41 @@ export default function ProductDetailPage() {
   };
 
   const handleUnlockClick = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
     localStorage.setItem('unlock_started', 'true');
     localStorage.setItem('unlock_time', Date.now().toString());
     window.location.href = 'https://gameflashx.space/sl/o1m5r';
   };
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !user || !product) return;
     
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    
+    try {
+      const requestRef = doc(collection(db, 'users', user.uid, 'productRequests'));
+      await setDoc(requestRef, {
+        id: requestRef.id,
+        userId: user.uid,
+        email: email,
+        productName: product.title,
+        timestamp: new Date().toISOString()
+      });
       setIsSubmitted(true);
-    }, 1500);
+    } catch (err) {
+      console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not save request. Please try again."
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!product) return null;
@@ -164,15 +186,9 @@ export default function ProductDetailPage() {
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          {/* Left: Product Image */}
-          <div className="relative aspect-square overflow-hidden rounded-[2.5rem] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-card group">
-            <Image
-              src={product.imageUrl}
-              alt={product.title}
-              fill
-              className="object-cover transition-transform duration-1000 group-hover:scale-105"
-              priority
-            />
+          {/* Left: Product Cover Design */}
+          <div className="relative aspect-square overflow-hidden rounded-[2.5rem] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group">
+            <ProductCover title={product.title} category={product.category} />
             <div className="absolute top-8 left-8">
               <Badge className="bg-primary/90 text-white border-none backdrop-blur-md px-6 py-2 text-xs font-bold uppercase tracking-widest shadow-xl">
                 {product.category}
@@ -265,7 +281,7 @@ export default function ProductDetailPage() {
                 >
                   <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 skew-x-12" />
                   <div className="flex items-center gap-3 relative z-10">
-                    <Lock className="w-6 h-6" /> Unlock Access
+                    <Lock className="w-6 h-6" /> {user ? 'Unlock Access' : 'Login to Unlock'}
                   </div>
                 </Button>
               )}
@@ -299,9 +315,9 @@ export default function ProductDetailPage() {
                 <DialogTitle className="text-4xl font-black font-headline mb-4 uppercase tracking-tighter">
                   Request Received!
                 </DialogTitle>
-                <DialogDescription className="text-muted-foreground text-lg font-medium leading-tight">
+                <div className="text-muted-foreground text-lg font-medium leading-tight">
                   Access details for "{product.title}" will be sent to your email shortly. Please check your inbox (and spam folder).
-                </DialogDescription>
+                </div>
               </DialogHeader>
               <Button 
                 variant="outline"
@@ -320,9 +336,9 @@ export default function ProductDetailPage() {
                 <DialogTitle className="text-3xl font-black font-headline mb-4 uppercase tracking-tighter">
                   Your Access is Ready!
                 </DialogTitle>
-                <DialogDescription className="text-muted-foreground text-base font-medium leading-tight">
-                  Thanks for completing the verification. Enter your email below to receive the bundle resources.
-                </DialogDescription>
+                <div className="text-muted-foreground text-base font-medium leading-tight">
+                  Thanks for completing the verification. Confirm your email below to receive the bundle resources.
+                </div>
               </DialogHeader>
 
               <form onSubmit={handleEmailSubmit} className="space-y-6">
