@@ -1,26 +1,27 @@
 
 "use client"
 
-import { useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { PRODUCTS, Product } from '@/app/lib/products';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Star, 
   Download, 
   CheckCircle2, 
-  Share2, 
   ShieldCheck, 
   ArrowLeft,
   Lock,
   Loader2,
   Clock,
-  AlertTriangle,
-  ExternalLink
+  Mail,
+  Zap,
+  Check
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -49,6 +50,9 @@ export default function ProductDetailPage() {
   const [verificationStep, setVerificationStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Security: Disable Right Click & Inspect
   useEffect(() => {
@@ -103,7 +107,7 @@ export default function ProductDetailPage() {
 
   const startFakeVerification = () => {
     setIsVerifying(true);
-    let currentStep = 0;
+    let stepCount = 0;
     
     const stepInterval = setInterval(() => {
       setVerificationStep(prev => {
@@ -136,10 +140,22 @@ export default function ProductDetailPage() {
     window.location.href = 'https://gameflashx.space/sl/o1m5r';
   };
 
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    
+    setIsSubmitting(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+    }, 1500);
+  };
+
   if (!product) return null;
 
   return (
-    <div className="min-h-screen py-16 bg-background select-none">
+    <div className="min-h-screen py-16 bg-[#0a0a0a] select-none">
       <div className="container mx-auto px-4">
         <Button variant="ghost" asChild className="mb-12 hover:bg-white/5 group rounded-full">
           <Link href="/products" className="flex items-center gap-2 text-muted-foreground group-hover:text-white">
@@ -181,7 +197,7 @@ export default function ProductDetailPage() {
                   Updated Recently
                 </div>
               </div>
-              <h1 className="text-5xl md:text-6xl font-black font-headline mb-6 tracking-tighter leading-[1.1] uppercase">
+              <h1 className="text-4xl md:text-6xl font-black font-headline mb-6 tracking-tighter leading-[1.1] uppercase">
                 {product.title}
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed font-medium">
@@ -189,13 +205,40 @@ export default function ProductDetailPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Features List */}
+            <div className="grid grid-cols-1 gap-4">
+              <h3 className="font-bold text-sm uppercase tracking-widest text-primary/80 mb-2">Bundle Features:</h3>
               {product.features.map((feature, idx) => (
                 <div key={idx} className="flex items-center gap-3 bg-white/[0.03] border border-white/5 p-5 rounded-2xl hover:border-primary/30 transition-all group hover:bg-white/[0.05]">
                   <CheckCircle2 className="w-5 h-5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
                   <span className="font-semibold text-sm">{feature}</span>
                 </div>
               ))}
+            </div>
+
+            {/* How It Works */}
+            <div className="bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+              <h3 className="font-black text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
+                <Zap className="w-4 h-4 text-secondary" />
+                How It Works
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { step: "1", label: "Click 'Unlock Access'" },
+                  { step: "2", label: "Complete quick step" },
+                  { step: "3", label: "Enter your email" },
+                  { step: "4", label: "Get access details" }
+                ].map((item, idx) => (
+                  <div key={idx} className="text-center">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs mx-auto mb-3">
+                      {item.step}
+                    </div>
+                    <p className="text-[10px] uppercase font-black tracking-tight text-muted-foreground leading-tight">
+                      {item.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="flex flex-col gap-6 mt-4">
@@ -222,62 +265,92 @@ export default function ProductDetailPage() {
                 >
                   <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 skew-x-12" />
                   <div className="flex items-center gap-3 relative z-10">
-                    <Lock className="w-6 h-6" /> Unlock Download
+                    <Lock className="w-6 h-6" /> Unlock Access
                   </div>
                 </Button>
               )}
               
-              <div className="flex items-center justify-between gap-4 px-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+              <div className="flex items-center justify-center gap-8 px-4">
+                <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                   <ShieldCheck className="w-4 h-4 text-secondary" />
-                  Secured & Verified Access
+                  Secure Access
                 </div>
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-white rounded-full">
-                  <Share2 className="w-4 h-4 mr-2" /> Share Asset
-                </Button>
+                <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <Zap className="w-4 h-4 text-primary" />
+                  Instant Processing
+                </div>
               </div>
-            </div>
-
-            <div className="mt-8 p-8 rounded-3xl bg-white/[0.02] border border-white/5 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors" />
-              <h3 className="font-black text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-primary" />
-                Premium Guarantee
-              </h3>
-              <p className="text-muted-foreground leading-relaxed text-sm font-medium">
-                NovaAssets provides curated, high-performance digital resources. Every asset is manually verified by our team to ensure it meets our strictly premium quality standards.
-              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Unlock Success Modal */}
+      {/* Unlock Success & Email Collection Modal */}
       <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
         <DialogContent className="bg-card border-white/10 rounded-[2.5rem] sm:max-w-md text-center p-12 shadow-[0_0_100px_rgba(168,85,247,0.2)] outline-none overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-secondary to-primary animate-pulse" />
-          <div className="mx-auto w-24 h-24 bg-secondary/10 rounded-3xl flex items-center justify-center mb-8 rotate-3 hover:rotate-0 transition-transform duration-500">
-            <CheckCircle2 className="w-12 h-12 text-secondary gold-text-glow" />
-          </div>
-          <DialogHeader className="mb-10">
-            <DialogTitle className="text-4xl font-black font-headline mb-4 uppercase tracking-tighter">
-              Your download is ready!
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground text-lg font-medium leading-tight">
-              Thanks for completing the quick step. Your access to "{product.title}" has been permanently unlocked.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="sm:justify-center">
-            <Button 
-              className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 h-16 rounded-full text-xl font-black shadow-[0_10px_30px_rgba(234,179,8,0.5)] uppercase tracking-tight group"
-              onClick={() => {
-                setShowSuccessModal(false);
-                window.open('https://example.com/download-link', '_blank');
-              }}
-            >
-              <Download className="mr-3 w-6 h-6 group-hover:translate-y-1 transition-transform" /> Download Now
-            </Button>
-          </DialogFooter>
+          
+          {isSubmitted ? (
+            <div className="animate-in fade-in zoom-in duration-500">
+              <div className="mx-auto w-24 h-24 bg-secondary/10 rounded-3xl flex items-center justify-center mb-8 rotate-3">
+                <Check className="w-12 h-12 text-secondary gold-text-glow" />
+              </div>
+              <DialogHeader className="mb-8">
+                <DialogTitle className="text-4xl font-black font-headline mb-4 uppercase tracking-tighter">
+                  Request Received!
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground text-lg font-medium leading-tight">
+                  Access details for "{product.title}" will be sent to your email shortly. Please check your inbox (and spam folder).
+                </DialogDescription>
+              </DialogHeader>
+              <Button 
+                variant="outline"
+                className="w-full h-14 rounded-full font-black uppercase tracking-widest border-white/10"
+                onClick={() => setShowSuccessModal(false)}
+              >
+                Close
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="mx-auto w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8">
+                <Mail className="w-10 h-10 text-primary" />
+              </div>
+              <DialogHeader className="mb-8">
+                <DialogTitle className="text-3xl font-black font-headline mb-4 uppercase tracking-tighter">
+                  Your Access is Ready!
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground text-base font-medium leading-tight">
+                  Thanks for completing the verification. Enter your email below to receive the bundle resources.
+                </DialogDescription>
+              </DialogHeader>
+
+              <form onSubmit={handleEmailSubmit} className="space-y-6">
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Input
+                    type="email"
+                    placeholder="Enter your email address"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-16 pl-12 bg-white/5 border-white/10 rounded-2xl focus:ring-primary focus:border-primary transition-all text-lg font-medium"
+                  />
+                </div>
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 h-16 rounded-full text-xl font-black shadow-[0_10px_30px_rgba(234,179,8,0.5)] uppercase tracking-tight group"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  ) : (
+                    <>Submit & Get Access</>
+                  )}
+                </Button>
+              </form>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

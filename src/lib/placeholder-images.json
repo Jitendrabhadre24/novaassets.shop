@@ -35,6 +35,12 @@
       "description": "Mastering UI Design",
       "imageUrl": "https://picsum.photos/seed/106/1200/800",
       "imageHint": "ui design"
+    },
+    {
+      "id": "canva-bundle",
+      "description": "Canva Pro & Design Bundle",
+      "imageUrl": "https://picsum.photos/seed/canva/1200/800",
+      "imageHint": "graphic design"
     }
   ]
 }

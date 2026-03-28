@@ -1,3 +1,4 @@
+
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export interface Product {
@@ -15,6 +16,22 @@ export interface Product {
 }
 
 export const PRODUCTS: Product[] = [
+  {
+    id: 'canva-bundle',
+    title: 'Canva Pro Access + Premium Design Bundle',
+    description: 'Get access to premium design tools, templates, and exclusive resources for your next big project.',
+    category: 'Graphics',
+    imageUrl: PlaceHolderImages.find(img => img.id === 'canva-bundle')?.imageUrl || '',
+    price: 'Free',
+    features: [
+      'Access to premium design templates',
+      'Social media post packs',
+      'Business branding kits',
+      'Resume & presentation templates',
+      'Step-by-step Canva Pro usage guide'
+    ],
+    stats: { downloads: '642', rating: '4.8' }
+  },
   {
     id: '1',
     title: 'Modern UI/UX Mastery',
@@ -64,16 +81,6 @@ export const PRODUCTS: Product[] = [
     price: 'Free',
     features: ['4K PNG Textures', 'Source Blender Files', 'Customizable Colors', 'Commercial License'],
     stats: { downloads: '321', rating: '4.9' }
-  },
-  {
-    id: '6',
-    title: 'Sales Funnel Blueprint',
-    description: 'Proven strategies for turning cold traffic into loyal customers.',
-    category: 'Courses',
-    imageUrl: PlaceHolderImages.find(img => img.id === 'course-1')?.imageUrl || '',
-    price: 'Free',
-    features: ['Video Tutorials', 'Copywriting Hacks', 'A/B Test Data', 'Email Sequences'],
-    stats: { downloads: '550', rating: '4.8' }
   }
 ];
 
