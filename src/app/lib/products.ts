@@ -18,62 +18,62 @@ export const PRODUCTS: Product[] = [
   {
     id: '1',
     title: 'Modern UI/UX Mastery',
-    description: 'Learn the principles of modern interface design and user experience.',
+    description: 'Master the art of high-conversion interface design for SaaS products.',
     category: 'Courses',
     imageUrl: PlaceHolderImages.find(img => img.id === 'course-2')?.imageUrl || '',
     price: 'Free',
-    features: ['10+ Hours Content', 'Project Files Included', 'Certificate of Completion', 'Lifetime Access'],
-    stats: { downloads: '12,532', rating: '4.8' }
+    features: ['12 High-Res Modules', 'Figma Resource Kit', 'Case Study Templates', 'Design Checklist'],
+    stats: { downloads: '527', rating: '4.8' }
   },
   {
     id: '2',
-    title: 'SaaS Dashboard Template',
-    description: 'A fully responsive React + Tailwind CSS dashboard template.',
+    title: 'SaaS Analytics Dashboard',
+    description: 'Professional-grade React components for data-heavy applications.',
     category: 'Templates',
     imageUrl: PlaceHolderImages.find(img => img.id === 'template-1')?.imageUrl || '',
     price: 'Free',
-    features: ['React & Tailwind', 'Dark mode support', 'Figma Files', 'Documentation'],
-    stats: { downloads: '8,210', rating: '4.9' }
+    features: ['React & Tailwind', 'Dark/Light Mode', 'Fully Responsive', 'Chart Library Included'],
+    stats: { downloads: '612', rating: '4.9' }
   },
   {
     id: '3',
-    title: 'The Digital Wealth Guide',
-    description: 'A comprehensive ebook on building a digital asset portfolio.',
+    title: 'Digital Empire Ebook',
+    description: 'The definitive guide to scaling your first digital asset portfolio.',
     category: 'Ebooks',
     imageUrl: PlaceHolderImages.find(img => img.id === 'ebook-1')?.imageUrl || '',
     price: 'Free',
-    features: ['150+ Pages', 'PDF & EPUB', 'Case Studies', 'Interactive Worksheets'],
-    stats: { downloads: '15,600', rating: '4.7' }
+    features: ['200+ Pages PDF', 'Market Strategy Map', 'Outsourcing Guide', 'Bonus Worksheets'],
+    stats: { downloads: '489', rating: '4.7' }
   },
   {
     id: '4',
-    title: 'Automation Workflow Engine',
-    description: 'Software tool to automate repetitive social media tasks.',
+    title: 'Social Automation Suite',
+    description: 'Automate your content pipeline with these powerful script templates.',
     category: 'Software',
     imageUrl: PlaceHolderImages.find(img => img.id === 'software-1')?.imageUrl || '',
     price: 'Free',
-    features: ['API Access', 'Multi-platform', 'Cloud Sync', 'Detailed Analytics'],
-    stats: { downloads: '5,400', rating: '4.5' }
+    features: ['API Integrations', 'Scheduling Engine', 'Proxy Support', 'Detailed Logs'],
+    stats: { downloads: '734', rating: '4.6' }
   },
   {
     id: '5',
-    title: 'Ultimate 3D Icon Pack',
-    description: 'Over 200 high-resolution 3D icons for your next project.',
+    title: 'Premium 3D Element Pack',
+    description: 'High-quality 3D icons optimized for web and mobile performance.',
     category: 'Graphics',
     imageUrl: PlaceHolderImages.find(img => img.id === 'graphics-1')?.imageUrl || '',
     price: 'Free',
-    features: ['PNG & BLEND Files', 'Transparent Backgrounds', 'Multiple Angles', '4K Resolution'],
-    stats: { downloads: '22,100', rating: '4.9' }
+    features: ['4K PNG Textures', 'Source Blender Files', 'Customizable Colors', 'Commercial License'],
+    stats: { downloads: '321', rating: '4.9' }
   },
   {
     id: '6',
-    title: 'Digital Marketing Playbook',
-    description: 'Advanced strategies for scaling your digital products.',
+    title: 'Sales Funnel Blueprint',
+    description: 'Proven strategies for turning cold traffic into loyal customers.',
     category: 'Courses',
     imageUrl: PlaceHolderImages.find(img => img.id === 'course-1')?.imageUrl || '',
     price: 'Free',
-    features: ['Live Sessions', 'Email Templates', 'Ad Spend Analysis', 'Community Access'],
-    stats: { downloads: '9,800', rating: '4.6' }
+    features: ['Video Tutorials', 'Copywriting Hacks', 'A/B Test Data', 'Email Sequences'],
+    stats: { downloads: '550', rating: '4.8' }
   }
 ];
 

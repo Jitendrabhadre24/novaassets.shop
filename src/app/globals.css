@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 270 7% 9%;
+    --background: 0 0% 4%;
     --foreground: 0 0% 98%;
-    --card: 270 7% 11%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 98%;
-    --popover: 270 7% 9%;
+    --popover: 0 0% 4%;
     --popover-foreground: 0 0% 98%;
-    --primary: 264 100% 63%;
+    --primary: 270 100% 64%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 244 100% 81%;
-    --secondary-foreground: 270 7% 9%;
-    --muted: 270 7% 15%;
+    --secondary: 45 100% 50%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
-    --accent: 264 100% 63%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 270 7% 20%;
-    --input: 270 7% 20%;
-    --ring: 264 100% 63%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 270 100% 64%;
     --radius: 0.75rem;
   }
 }
@@ -33,6 +33,7 @@
   }
   body {
     @apply bg-background text-foreground selection:bg-primary/30;
+    font-family: 'Inter', sans-serif;
   }
 }
 
@@ -41,14 +42,22 @@
 }
 
 .glow-card:hover {
-  box-shadow: 0 0 20px rgba(140, 64, 255, 0.2);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.15), 0 0 10px rgba(234, 179, 8, 0.05);
   transform: translateY(-4px);
 }
 
 .glass-morphism {
-  @apply bg-background/60 backdrop-blur-md border-b border-white/5;
+  @apply bg-background/80 backdrop-blur-xl border-b border-white/5;
 }
 
 .hero-gradient {
-  background: radial-gradient(circle at center, rgba(140, 64, 255, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% -20%, rgba(168, 85, 247, 0.25) 0%, transparent 60%);
+}
+
+.gold-text-glow {
+  text-shadow: 0 0 10px rgba(234, 179, 8, 0.3);
+}
+
+.purple-text-glow {
+  text-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
 }

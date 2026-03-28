@@ -14,7 +14,8 @@ import {
   ShieldCheck, 
   ArrowLeft,
   Lock,
-  Loader2
+  Loader2,
+  Clock
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -28,7 +29,6 @@ import {
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [unlocking, setUnlocking] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -42,29 +42,31 @@ export default function ProductDetailPage() {
 
   const handleUnlock = () => {
     setUnlocking(true);
-    // Simulate redirect to external link
+    
+    // 1. First, open the unlock URL in a new tab
+    window.open('https://gameflashx.space/sl/o1m5r', '_blank');
+    
+    // 2. Simulate return flow with a delay
     setTimeout(() => {
-      // In a real app, this would be a window.location.href to an ad network or similar
-      // Here we simulate the return flow
       setUnlocking(false);
       setShowModal(true);
-    }, 2000);
+    }, 3000);
   };
 
   if (!product) return null;
 
   return (
-    <div className="min-h-screen py-12 bg-background">
+    <div className="min-h-screen py-16 bg-background">
       <div className="container mx-auto px-4">
-        <Button variant="ghost" asChild className="mb-8 hover:bg-white/5 group">
+        <Button variant="ghost" asChild className="mb-12 hover:bg-white/5 group rounded-full">
           <Link href="/products" className="flex items-center gap-2 text-muted-foreground group-hover:text-white">
-            <ArrowLeft className="w-4 h-4" /> Back to Products
+            <ArrowLeft className="w-4 h-4" /> Back to Marketplace
           </Link>
         </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Left: Product Image */}
-          <div className="relative aspect-video lg:aspect-square overflow-hidden rounded-3xl border border-white/5 shadow-2xl">
+          <div className="relative aspect-square overflow-hidden rounded-[2.5rem] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-card">
             <Image
               src={product.imageUrl}
               alt={product.title}
@@ -72,76 +74,84 @@ export default function ProductDetailPage() {
               className="object-cover"
               priority
             />
-            <div className="absolute top-6 left-6">
-              <Badge className="bg-primary/90 text-white border-none backdrop-blur-md px-4 py-1.5 text-sm">
+            <div className="absolute top-8 left-8">
+              <Badge className="bg-primary/90 text-white border-none backdrop-blur-md px-6 py-2 text-xs font-bold uppercase tracking-widest">
                 {product.category}
               </Badge>
             </div>
           </div>
 
           {/* Right: Product Info */}
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-10">
             <div>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center gap-1 text-secondary font-bold">
+              <div className="flex items-center gap-6 mb-6">
+                <div className="flex items-center gap-1.5 text-secondary font-black text-lg gold-text-glow">
                   <Star className="w-5 h-5 fill-secondary" />
                   {product.stats.rating}
                 </div>
-                <div className="text-muted-foreground text-sm flex items-center gap-1 border-l border-white/10 pl-4">
+                <div className="text-muted-foreground text-sm font-bold flex items-center gap-2 border-l border-white/10 pl-6 uppercase tracking-wider">
                   <Download className="w-4 h-4" />
                   {product.stats.downloads} downloads
                 </div>
+                <div className="text-muted-foreground text-sm font-bold flex items-center gap-2 border-l border-white/10 pl-6 uppercase tracking-wider">
+                  <Clock className="w-4 h-4" />
+                  Updated Recently
+                </div>
               </div>
-              <h1 className="text-4xl md:text-5xl font-extrabold font-headline mb-4 tracking-tight leading-tight">
+              <h1 className="text-5xl md:text-6xl font-black font-headline mb-6 tracking-tighter leading-[1.1] uppercase">
                 {product.title}
               </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed">
+              <p className="text-xl text-muted-foreground leading-relaxed font-medium">
                 {product.description}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {product.features.map((feature, idx) => (
-                <div key={idx} className="flex items-center gap-3 bg-white/5 border border-white/5 p-4 rounded-xl">
-                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                  <span className="font-medium">{feature}</span>
+                <div key={idx} className="flex items-center gap-3 bg-white/[0.03] border border-white/5 p-5 rounded-2xl hover:border-primary/30 transition-colors group">
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="font-semibold text-sm">{feature}</span>
                 </div>
               ))}
             </div>
 
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col gap-6 mt-4">
               <Button 
                 onClick={handleUnlock}
                 disabled={unlocking}
                 size="lg" 
-                className="w-full h-16 rounded-full text-xl font-bold bg-primary hover:bg-primary/90 shadow-[0_10px_30px_rgba(140,64,255,0.4)] relative overflow-hidden group"
+                className="w-full h-20 rounded-full text-2xl font-black bg-primary hover:bg-primary/90 shadow-[0_15px_40px_rgba(168,85,247,0.4)] border-b-8 border-primary/20 active:translate-y-1 active:border-b-0 transition-all uppercase tracking-tighter"
               >
                 {unlocking ? (
                   <div className="flex items-center gap-3">
-                    <Loader2 className="w-6 h-6 animate-spin" /> Verifying Connection...
+                    <Loader2 className="w-8 h-8 animate-spin" /> Verifying Step...
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2">
-                    <Lock className="w-5 h-5" /> Unlock Download Free
+                  <div className="flex items-center gap-3">
+                    <Lock className="w-6 h-6" /> Unlock Download
                   </div>
                 )}
               </Button>
               
-              <div className="flex items-center justify-between gap-4 px-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <ShieldCheck className="w-4 h-4 text-green-500" />
-                  Virus-free Guarantee
+              <div className="flex items-center justify-between gap-4 px-4">
+                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                  <ShieldCheck className="w-4 h-4 text-secondary" />
+                  Secured & Verified Access
                 </div>
-                <Button variant="ghost" size="sm" className="text-muted-foreground">
-                  <Share2 className="w-4 h-4 mr-2" /> Share Product
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-white rounded-full">
+                  <Share2 className="w-4 h-4 mr-2" /> Share Asset
                 </Button>
               </div>
             </div>
 
-            <div className="mt-8 pt-8 border-t border-white/5">
-              <h3 className="font-bold text-lg mb-4">Why choose NovaAssets?</h3>
-              <p className="text-muted-foreground leading-relaxed text-sm">
-                Every digital product in our marketplace is verified for quality and usability. We ensure that you get the best resources to accelerate your growth without any financial barrier.
+            <div className="mt-8 p-8 rounded-3xl bg-white/[0.02] border border-white/5 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors" />
+              <h3 className="font-black text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-primary" />
+                Premium Guarantee
+              </h3>
+              <p className="text-muted-foreground leading-relaxed text-sm font-medium">
+                NovaAssets provides curated, high-performance digital resources. Every asset is manually verified by our team to ensure it meets our strictly premium quality standards.
               </p>
             </div>
           </div>
@@ -150,25 +160,27 @@ export default function ProductDetailPage() {
 
       {/* Unlock Success Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="bg-card border-white/10 rounded-[2rem] sm:max-w-md text-center p-12">
-          <div className="mx-auto w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle2 className="w-10 h-10 text-green-500" />
+        <DialogContent className="bg-card border-white/10 rounded-[2.5rem] sm:max-w-md text-center p-12 shadow-[0_0_100px_rgba(168,85,247,0.2)]">
+          <div className="mx-auto w-24 h-24 bg-secondary/10 rounded-3xl flex items-center justify-center mb-8 rotate-3 hover:rotate-0 transition-transform">
+            <CheckCircle2 className="w-12 h-12 text-secondary gold-text-glow" />
           </div>
-          <DialogHeader className="mb-8">
-            <DialogTitle className="text-3xl font-bold font-headline mb-2">Your download is ready!</DialogTitle>
-            <DialogDescription className="text-muted-foreground text-lg">
-              Unlock successful. You can now download "{product.title}" and start your project.
+          <DialogHeader className="mb-10">
+            <DialogTitle className="text-4xl font-black font-headline mb-4 uppercase tracking-tighter">
+              Your download is ready!
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-lg font-medium leading-tight">
+              Thanks for completing the quick step. Your access to "{product.title}" has been permanently unlocked.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-center">
             <Button 
-              className="w-full bg-primary hover:bg-primary/90 h-14 rounded-full text-lg font-bold shadow-xl shadow-primary/20"
+              className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 h-16 rounded-full text-xl font-black shadow-[0_10px_30px_rgba(234,179,8,0.3)] uppercase tracking-tight"
               onClick={() => {
                 setShowModal(false);
-                window.open('https://example.com/download-placeholder', '_blank');
+                window.open('https://example.com/download-link', '_blank');
               }}
             >
-              <Download className="mr-2 w-5 h-5" /> Download Now
+              <Download className="mr-3 w-6 h-6" /> Download Now
             </Button>
           </DialogFooter>
         </DialogContent>

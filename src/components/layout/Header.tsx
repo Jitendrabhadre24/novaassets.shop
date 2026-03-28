@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ShoppingBag, Menu, X } from 'lucide-react';
+import { ShoppingBag, Menu, X, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -19,57 +19,59 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 glass-morphism w-full">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(140,64,255,0.5)]">
-            <ShoppingBag className="w-5 h-5 text-white" />
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(168,85,247,0.6)] group-hover:rotate-6 transition-transform">
+            <ShoppingBag className="w-6 h-6 text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight font-headline text-white">NovaAssets</span>
+          <span className="text-2xl font-black tracking-tighter font-headline text-white uppercase">
+            Nova<span className="text-primary italic">Assets</span>
+          </span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
+                "text-xs font-black uppercase tracking-[0.2em] transition-all hover:text-primary",
                 pathname === link.href ? "text-primary" : "text-muted-foreground"
               )}
             >
               {link.name}
             </Link>
           ))}
-          <Button variant="default" className="bg-primary hover:bg-primary/90 rounded-full px-6">
-            Get Started
+          <Button variant="default" className="bg-primary hover:bg-primary/90 rounded-full px-8 h-12 font-black uppercase tracking-wider text-xs shadow-[0_5px_15px_rgba(168,85,247,0.4)]">
+            <Sparkles className="w-4 h-4 mr-2" /> Join Free
           </Button>
         </nav>
 
         {/* Mobile Toggle */}
         <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
         </button>
       </div>
 
       {/* Mobile Nav */}
       {isOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b border-border p-4 animate-in slide-in-from-top duration-300">
-          <nav className="flex flex-col gap-4">
+        <div className="md:hidden absolute top-20 left-0 w-full bg-background border-b border-white/5 p-6 animate-in slide-in-from-top duration-300">
+          <nav className="flex flex-col gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "text-lg font-medium p-2 rounded-md",
+                  "text-xl font-black uppercase tracking-tighter p-3 rounded-2xl",
                   pathname === link.href ? "bg-primary/10 text-primary" : "text-muted-foreground"
                 )}
               >
                 {link.name}
               </Link>
             ))}
-            <Button variant="default" className="bg-primary hover:bg-primary/90 w-full rounded-full">
+            <Button variant="default" className="bg-primary hover:bg-primary/90 w-full rounded-full h-16 text-lg font-black uppercase tracking-tighter">
               Get Started
             </Button>
           </nav>
